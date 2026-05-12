@@ -88,24 +88,26 @@ SELECT warehouse_location, AVG(stock_level) AS avg_stock
 FROM bronze.inventory
 GROUP BY warehouse_location;
 
+---
+
 ### Tools and Technologies
-- **Azure Databricks**: Primary compute and notebook environment.
-- **Delta Lake**: Storage layer providing ACID transactions and scalable metadata handling.
-- **Unity Catalog**: Centralized governance for data and AI assets.
-- **GitHub**: Version control and CI/CD integration.
-- **VS Code**: Local development and data generation scripting.
-- **PySpark (Python)**: Core engine for data processing and ingestion.
-- **SQL**: Used for data validation and warehouse-style querying.
-- **dbt Core**: Orchestration and modeling (planned for later phases).
+- **Azure Databricks**: Primary compute and notebook environment for scalable data processing.
+- **Delta Lake**: Storage layer providing ACID transactions and high-performance metadata handling.
+- **Unity Catalog**: Centralized governance and fine-grained access control for all data assets.
+- **GitHub**: Version control, collaboration, and CI/CD integration.
+- **VS Code**: Local development environment for Python scripting and data generation.
+- **PySpark (Python)**: Core distributed processing engine for ingestion and complex transformations.
+- **SQL**: Used for ad-hoc data analysis, validation, and warehouse-style querying.
+- **dbt Core**: Planned for later phases to manage modular SQL transformations and documentation.
 
 ## Project Status
-- [x] Environment setup
-- [x] Project planning and data sourcing
-- [x] Phase 1: Bronze Ingestion
-- [ ] Phase 2: Silver Transformation
-- [ ] Phase 3: Gold Aggregation
-- [ ] Phase 4: Governance
-- [ ] Phase 5: AI Integration
+- [x] **Environment Setup**: Databricks workspace and Unity Catalog configuration.
+- [x] **Project Planning**: Data domain identification and sourcing strategy.
+- [x] **Phase 1: Bronze Ingestion**: Bulk data ingestion with 1,000+ records and audit metadata.
+- [ ] **Phase 2: Silver Transformation**: Data deduplication, cleaning, and standardization.
+- [ ] **Phase 3: Gold Aggregation**: Business-level reporting tables and KPIs.
+- [ ] **Phase 4: Governance**: Implementing Row-Level Security (RLS) and Column-Level Security (CLS).
+- [ ] **Phase 5: AI Integration**: Real-time insights and RAG-based analysis.
 
 ## Author
 Mahesh Boyapati

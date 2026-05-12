@@ -31,78 +31,72 @@ Before building the pipeline, we identified the key data sources required for su
 | **Shipments** | Event | Near Real-Time | Tracks shipment status updates for delay analysis. |
 | **Suppliers** | Master/Reference | Weekly | Provides vendor details for supplier performance analysis. |
 
-### Key Architectural Decisions
-- **Raw Retention**: The Bronze layer stores source data in its raw form with minimal transformation to support auditability and reprocessing.
-- **Decoupled Sourcing**: Reference data such as suppliers is managed separately from transactional data to improve clarity and maintainability.
-- **Hybrid Ingestion**: The design supports both batch-style data and frequent event-driven updates.
-
 ---
 
-## Bronze Ingestion Completed
-Implemented the raw data landing zone using senior-level engineering patterns in Azure Databricks.
+### Bronze Ingestion Completed
 
-### Key Deliverables
-| Component | Status | Description |
-|-----------|--------|-------------|
-| **Source Schemas** | Defined | PySpark `StructType` schemas for all four domains. |
-| **Bronze Delta Tables** | Created | Successfully created and populated `bronze.orders`, `bronze.inventory`, `bronze.shipments`, and `bronze.suppliers`. |
-| **Ingestion Pipeline** | Serverless-Ready | Python-native JSON parsing to support Databricks Serverless compute. |
-| **Data Quality** | Automated | Centralized DQ checks for null validation and record counts. |
-| **Performance** | Optimized | Delta Lake `OPTIMIZE` applied for file compaction and read efficiency. |
+### Key Updates:
+* **Dynamic Data Generation:** Developed a custom Python-based generator (`generate_data.py`) to produce **1,000+ synthetic supply chain records**, moving away from static mock data.
+* **Intentional Data Quality Stress-Testing:** Engineered the source dataset with purposeful **duplicate records** and **null values** (e.g., ~27% null rate in Order Status) to rigorously validate downstream cleaning logic.
+* **Scalable Ingestion Pattern:** Implemented a robust PySpark "Explode" logic that dynamically flattens nested JSON structures into governed Delta Lake tables.
+* **Automated DQ Reporting:** Integrated a validation suite that provides a real-time Data Quality (DQ) report for every ingestion run, tracking row counts and schema integrity.
+* **Infrastructure:** Configured a **Managed Volume** in Databricks Unity Catalog to serve as the landing zone for raw `.json` files.
+
+### Technical Implementation Detail
+- **Source Path:** `/Volumes/dbw_supply_chain_analytics/default/raw_data/sample_supply_chain_data.json`
+- **Tables Created:** `bronze.orders`, `bronze.inventory`, `bronze.shipments`, `bronze.suppliers`
+- **Audit Metadata:** Enriched all tables with `_ingest_time` (timestamp) and `_source_origin` (filename) for full lineage traceability.
 
 ### Implementation Proof
-The following screenshots confirm the successful deployment of the Bronze catalog and the verification of custom audit metadata:
+The following screenshots document the successful end-to-end execution of Phase 1, from initial ingestion to data governance and quality validation:
 
-**Bronze Catalog Overview** 
+**1. Ingestion Success Log**
+*Visual confirmation of 1,000 rows processed successfully into the Databricks environment.*
+![Ingestion Success](docs/screenshots/phase1_bronze_ingestion_success.png)
 
-![Bronze Catalog Proof](screenshots/bronze_catalog.png)
+**2. Bronze Catalog Structure**
+*Proves governance and organization of the four supply chain tables within the Unity Catalog schema.*
+![Unity Catalog Structure](docs/screenshots/unity_catalog_bronze_schema.png)
 
-**Audit Metadata Verification** 
+**3. Data Quality Report**
+*Shows the pipeline detecting intentional null values in the raw dataset for downstream resolution.*
+![DQ Report](docs/screenshots/phase1_dq_report_null_checks.png)
 
-![Bronze Audit Proof](screenshots/bronze_audit_results.png)
-
+**4. Audit Metadata Verification**
+*Demonstrates traceability with ingestion timestamps and source file tracking for every record.*
+![Audit Metadata Proof](docs/screenshots/bronze_orders_audit_metadata.png)
 
 ### Engineering Challenges & Resolutions
-- **Serverless compute limitations**: Initial ingestion approach caused runtime issues in Databricks Serverless. This was resolved by switching to a Python-native parsing method that works reliably in the notebook environment.
-- **Schema handling**: Source schemas were defined explicitly to ensure type consistency and avoid data quality issues during ingestion.
-- **Auditability and lineage**: Each record includes ingest metadata to support traceability and troubleshooting in downstream layers.
+- **Scalable Ingestion Strategy**: Developed a robust pipeline designed to process bulk JSON data (1,000+ records) from a Databricks Managed Volume. The system was engineered to handle complex nested structures and scale beyond simple mock data.
+- **Intentional Quality Stress-Testing**: Purposefully incorporated data quality issues (nulls and duplicates) within the source dataset to rigorously validate the error-handling and deduplication logic of downstream transformations.
+- **Production-Grade Auditability**: Implemented system-level metadata columns (`_ingest_time` and `_source_origin`) to ensure every record provides full lineage traceability for troubleshooting and compliance.
 
 ### Sample Bronze Queries
 ```sql
--- Quick check of ingestion success
+-- Quick check of ingestion success by source file
 SELECT _source_origin, COUNT(*) 
 FROM bronze.orders 
 GROUP BY 1;
 
--- Customer spend analysis (ready for Silver transformation)
+-- Customer spend analysis (identifying data ready for Silver transformation)
 SELECT customer_id, SUM(total_amount) AS total_spent
 FROM bronze.orders
 GROUP BY customer_id;
 
--- Inventory health check
+-- Inventory health check across warehouses
 SELECT warehouse_location, AVG(stock_level) AS avg_stock
 FROM bronze.inventory
 GROUP BY warehouse_location;
-```
 
-## Tools and Technologies
-- Azure Databricks
-- Delta Lake
-- Unity Catalog
-- GitHub
-- VS Code
-- PySpark (Python)
-- SQL
-- dbt Core (later phase)
-- AI/RAG integration (later phase)
-
-## Learning Outcomes
-By completing this project, I will demonstrate:
-- Data sourcing and architecture planning
-- Bronze, Silver, and Gold design principles
-- Data governance concepts using Unity Catalog
-- Portfolio-ready documentation
-- AI integration with governed data
+### Tools and Technologies
+- **Azure Databricks**: Primary compute and notebook environment.
+- **Delta Lake**: Storage layer providing ACID transactions and scalable metadata handling.
+- **Unity Catalog**: Centralized governance for data and AI assets.
+- **GitHub**: Version control and CI/CD integration.
+- **VS Code**: Local development and data generation scripting.
+- **PySpark (Python)**: Core engine for data processing and ingestion.
+- **SQL**: Used for data validation and warehouse-style querying.
+- **dbt Core**: Orchestration and modeling (planned for later phases).
 
 ## Project Status
 - [x] Environment setup
@@ -112,9 +106,6 @@ By completing this project, I will demonstrate:
 - [ ] Phase 3: Gold Aggregation
 - [ ] Phase 4: Governance
 - [ ] Phase 5: AI Integration
-
-## Notes
-This project is being built as a portfolio piece to demonstrate practical modern data engineering skills in Azure Databricks.
 
 ## Author
 Mahesh Boyapati

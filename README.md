@@ -56,7 +56,7 @@ The following screenshots document the successful end-to-end execution of Phase 
 
 **2. Bronze Catalog Structure**
 *Proves governance and organization of the four supply chain tables within the Unity Catalog schema.*
-![Unity Catalog Structure](screenshots/unity_catalog_bronze_schema.png)
+![Unity Catalog Structure](screenshots/bronze_catalog.png)
 
 **3. Data Quality Report**
 *Shows the pipeline detecting intentional null values in the raw dataset for downstream resolution.*

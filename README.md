@@ -52,19 +52,19 @@ The following screenshots document the successful end-to-end execution of Phase 
 
 **1. Ingestion Success Log**
 *Visual confirmation of 1,000 rows processed successfully into the Databricks environment.*
-![Ingestion Success](docs/screenshots/phase1_bronze_ingestion_success.png)
+![Ingestion Success](screenshots/phase1_bronze_ingestion_success.png)
 
 **2. Bronze Catalog Structure**
 *Proves governance and organization of the four supply chain tables within the Unity Catalog schema.*
-![Unity Catalog Structure](docs/screenshots/unity_catalog_bronze_schema.png)
+![Unity Catalog Structure](screenshots/unity_catalog_bronze_schema.png)
 
 **3. Data Quality Report**
 *Shows the pipeline detecting intentional null values in the raw dataset for downstream resolution.*
-![DQ Report](docs/screenshots/phase1_dq_report_null_checks.png)
+![DQ Report](screenshots/phase1_dq_report_null_checks.png)
 
 **4. Audit Metadata Verification**
 *Demonstrates traceability with ingestion timestamps and source file tracking for every record.*
-![Audit Metadata Proof](docs/screenshots/bronze_orders_audit_metadata.png)
+![Audit Metadata Proof](screenshots/bronze_orders_audit_metadata.png)
 
 ### Engineering Challenges & Resolutions
 - **Scalable Ingestion Strategy**: Developed a robust pipeline designed to process bulk JSON data (1,000+ records) from a Databricks Managed Volume. The system was engineered to handle complex nested structures and scale beyond simple mock data.

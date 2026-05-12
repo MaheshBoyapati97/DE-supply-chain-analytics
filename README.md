@@ -69,6 +69,11 @@ The following screenshots confirm the successful deployment of the Bronze catalo
 
 ### Sample Bronze Queries
 ```sql
+-- Quick check of ingestion success
+SELECT _source_origin, COUNT(*) 
+FROM bronze.orders 
+GROUP BY 1;
+
 -- Customer spend analysis (ready for Silver transformation)
 SELECT customer_id, SUM(total_amount) AS total_spent
 FROM bronze.orders

@@ -87,8 +87,7 @@ GROUP BY customer_id;
 SELECT warehouse_location, AVG(stock_level) AS avg_stock
 FROM bronze.inventory
 GROUP BY warehouse_location;
-
---
+```
 
 ### Tools and Technologies
 - **Azure Databricks**: Primary compute and notebook environment for scalable data processing.

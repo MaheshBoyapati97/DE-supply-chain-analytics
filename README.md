@@ -20,7 +20,7 @@ The project follows a Medallion Architecture pattern:
 
 ---
 
-## Phase 1: Data Sourcing & Architecture Planning
+## Phase 1: Data Sourcing & Bronze Ingestion
 Before building the pipeline, we identified the key data sources required for supply chain visibility. This phase focuses on defining the origin, frequency, and purpose of the data.
 
 ### Data Domains & Strategy
@@ -38,17 +38,29 @@ Before building the pipeline, we identified the key data sources required for su
 
 ---
 
-## Phase 1: Bronze Ingestion ✅ Completed
+## Bronze Ingestion Completed
 Implemented the raw data landing zone using senior-level engineering patterns in Azure Databricks.
 
 ### Key Deliverables
 | Component | Status | Description |
 |-----------|--------|-------------|
-| **Source Schemas** | ✅ Defined | PySpark `StructType` schemas for all four domains. |
-| **Bronze Delta Tables** | ✅ Created | Successfully created and populated `bronze.orders`, `bronze.inventory`, `bronze.shipments`, and `bronze.suppliers`. |
-| **Ingestion Pipeline** | ✅ Serverless-Ready | Python-native JSON parsing to support Databricks Serverless compute. |
-| **Data Quality** | ✅ Automated | Centralized DQ checks for null validation and record counts. |
-| **Performance** | ✅ Optimized | Delta Lake `OPTIMIZE` applied for file compaction and read efficiency. |
+| **Source Schemas** | Defined | PySpark `StructType` schemas for all four domains. |
+| **Bronze Delta Tables** | Created | Successfully created and populated `bronze.orders`, `bronze.inventory`, `bronze.shipments`, and `bronze.suppliers`. |
+| **Ingestion Pipeline** | Serverless-Ready | Python-native JSON parsing to support Databricks Serverless compute. |
+| **Data Quality** | Automated | Centralized DQ checks for null validation and record counts. |
+| **Performance** | Optimized | Delta Lake `OPTIMIZE` applied for file compaction and read efficiency. |
+
+### Implementation Proof
+The following screenshots confirm the successful deployment of the Bronze catalog and the verification of custom audit metadata:
+
+**Bronze Catalog Overview** 
+
+![Bronze Catalog Proof](screenshots/bronze_catalog.png)
+
+**Audit Metadata Verification** 
+
+![Bronze Audit Proof](screenshots/bronze_audit_results.png)
+
 
 ### Engineering Challenges & Resolutions
 - **Serverless compute limitations**: Initial ingestion approach caused runtime issues in Databricks Serverless. This was resolved by switching to a Python-native parsing method that works reliably in the notebook environment.
@@ -100,4 +112,4 @@ By completing this project, I will demonstrate:
 This project is being built as a portfolio piece to demonstrate practical modern data engineering skills in Azure Databricks.
 
 ## Author
-Mahesh Naidu
+Mahesh Boyapati

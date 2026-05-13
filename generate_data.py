@@ -4,7 +4,7 @@ import os
 from datetime import datetime, timedelta
 
 def generate_bulk_data():
-    # 1. Create Suppliers
+    # 1. Create Suppliers (50 suppliers)
     suppliers = []
     for i in range(1, 51):
         suppliers.append({
@@ -14,11 +14,11 @@ def generate_bulk_data():
             "reliability_score": round(random.uniform(0.5, 1.0), 2)
         })
 
-    # 2. Create Orders (1,000 rows with some duplicates)
+    # 2. Create Orders (1,000 rows with intentional duplicates and nulls)
     orders = []
     base_date = datetime(2026, 1, 1)
     for i in range(1, 1001):
-        # Purposefully create a duplicate every 50th record
+        # Purposefully create a duplicate ID every 50th record
         order_id = f"ORD{i:04}"
         if i % 50 == 0:
             order_id = f"ORD{(i-1):04}" 
@@ -26,60 +26,70 @@ def generate_bulk_data():
         orders.append({
             "order_id": order_id,
             "customer_id": f"CUST{random.randint(100, 999)}",
-            "order_date": (base_date + timedelta(days=random.randint(0, 100))).strftime("%Y-%m-%d"),
+            "product_id": f"PROD{random.randint(1, 100)}", # Added to link with Inventory
+            "order_date": (base_date + timedelta(days=random.randint(0, 30))).strftime("%Y-%m-%d"),
             "total_amount": round(random.uniform(50.0, 5000.0), 2),
-            "status": random.choice(["Shipped", "Processing", "Cancelled", None]) # Some Nulls
+            "status": random.choice(["Shipped", "Processing", "Cancelled", None]) # Intentional Nulls
         })
 
     # 3. Create Inventory Snapshots
     inventory = []
-    for i in range(1, 501):
+    for i in range(1, 101): # 100 Unique Products
         inventory.append({
-            "product_id": f"PROD{random.randint(1, 100)}",
+            "product_id": f"PROD{i:03}",
             "warehouse_location": random.choice(["Chicago", "New York", "Austin", "Seattle"]),
             "stock_level": random.randint(0, 500),
             "reorder_point": 50
         })
 
-    # 4. Create Shipments
+    # 4. Create Shipments (Standardized Names)
     shipments = []
-    for i in range(1, 1001):
+    for i in range(0, 1000):
+        # Fetch the corresponding order date to ensure logical shipping dates
+        ord_date_str = orders[i]["order_date"]
+        ord_date = datetime.strptime(ord_date_str, "%Y-%m-%d")
+        
+        # Warehouse Processing: 1-3 days after order
+        ship_date = ord_date + timedelta(days=random.randint(1, 3))
+        
+        # Carrier Transit: 3-7 days after shipping
+        est_delivery = ship_date + timedelta(days=random.randint(3, 7))
+        
+        # Actual Delivery (80% delivered, 20% in-transit/None)
+        act_delivery = None
+        if random.random() > 0.2:
+            # Can be 2 days early to 3 days late
+            act_delivery = est_delivery + timedelta(days=random.randint(-2, 3))
+
         shipments.append({
-            "shipment_id": f"SHP{i:04}",
-            "order_id": f"ORD{i:04}",
+            "shipment_id": f"SHP{i+1:04}",
+            "order_id": orders[i]["order_id"],
             "carrier": random.choice(["FedEx", "UPS", "DHL"]),
-            "estimated_delivery": (base_date + timedelta(days=random.randint(5, 110))).strftime("%Y-%m-%d"),
-            "actual_delivery": (base_date + timedelta(days=random.randint(5, 115))).strftime("%Y-%m-%d") if random.random() > 0.2 else None
+            "shipment_date": ship_date.strftime("%Y-%m-%d"),
+            "estimated_delivery_date": est_delivery.strftime("%Y-%m-%d"),
+            "actual_delivery_date": act_delivery.strftime("%Y-%m-%d") if act_delivery else None
         })
 
-    return {"orders": orders, "suppliers": suppliers, "inventory": inventory, "shipments": shipments}
+    return {
+        "orders": orders, 
+        "suppliers": suppliers, 
+        "inventory": inventory, 
+        "shipments": shipments
+    }
 
 if __name__ == "__main__":
-    # 1. Define the directory and file name
     output_dir = 'data_source'
     file_name = 'sample_supply_chain_data.json'
     
-    # 2. CREATE THE FOLDER IF IT IS MISSING
-    # exist_ok=True prevents an error if the folder already exists
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
-        print(f"Created directory: {output_dir}")
 
     file_path = os.path.join(output_dir, file_name)
     
-    # 3. Generate and save the data
-    print("Generating bulk supply chain data (1,000+ rows)...")
+    print("Generating refined supply chain data...")
     data = generate_bulk_data()
     
     with open(file_path, 'w') as f:
         json.dump(data, f, indent=4)
         
     print(f"✅ Success! Data saved to: {file_path}")
-
-
-# Save it
-data = generate_bulk_data()
-with open('data_source/sample_supply_chain_data.json', 'w') as f:
-    json.dump(data, f, indent=4)
-
-print("Generated 1,000+ rows of messy supply chain data!")

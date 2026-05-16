@@ -26,18 +26,25 @@ def generate_bulk_data():
         orders.append({
             "order_id": order_id,
             "customer_id": f"CUST{random.randint(100, 999)}",
-            "product_id": f"PROD{random.randint(1, 100)}", # Added to link with Inventory
+            # FIXED: Using 3-digit padding to match Inventory (PROD001 vs PROD001)
+            "product_id": f"PROD{random.randint(1, 100):03}", 
             "order_date": (base_date + timedelta(days=random.randint(0, 30))).strftime("%Y-%m-%d"),
             "total_amount": round(random.uniform(50.0, 5000.0), 2),
             "status": random.choice(["Shipped", "Processing", "Cancelled", None]) # Intentional Nulls
         })
 
-    # 3. Create Inventory Snapshots
+    # 3. Create Inventory Snapshots (100 Unique Products across 10 Cities)
     inventory = []
-    for i in range(1, 101): # 100 Unique Products
+    locations = [
+        "New York", "Los Angeles", "Chicago", "Houston", "Phoenix", 
+        "Philadelphia", "San Antonio", "San Diego", "Dallas", "San Jose"
+    ]
+    
+    for i in range(1, 101):
         inventory.append({
             "product_id": f"PROD{i:03}",
-            "warehouse_location": random.choice(["Chicago", "New York", "Austin", "Seattle"]),
+            # FIXED: Cycle through 10 cities to ensure even distribution in Dashboard
+            "warehouse_location": locations[i % len(locations)], 
             "stock_level": random.randint(0, 500),
             "reorder_point": 50
         })
@@ -86,7 +93,7 @@ if __name__ == "__main__":
 
     file_path = os.path.join(output_dir, file_name)
     
-    print("Generating refined supply chain data...")
+    print("Generating refined supply chain data with 10 warehouse locations...")
     data = generate_bulk_data()
     
     with open(file_path, 'w') as f:

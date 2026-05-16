@@ -17,3 +17,15 @@ This document outlines the schema of the raw JSON files generated for the Supply
 | **supplier_master_raw.json** | `supplier_id` | Integer | Unique supplier ID |
 | | `supplier_name` | String | Name of the vendor |
 | | `region` | String | Supplier location |
+
+
+
+---
+
+## Relational Architecture & Join Keys
+
+To transform these siloed Bronze-layer JSON files into curated Silver tables and aggregated Gold analytic views, the pipeline utilizes the following relational join keys:
+
+* **`order_id`**: Serves as the primary behavioral join link between operational demand (`orders_raw`) and fulfillment logistics (`shipments_raw`).
+* **`product_id`**: Links operational consumer demand directly to current local storage constraints (`inventory_raw`) to compute stockout risk.
+* **`supplier_id` / `region`**: Joined against the supply network to evaluate vendor lead times and regional carrier performance.

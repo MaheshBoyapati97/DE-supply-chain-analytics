@@ -227,7 +227,6 @@ This phase secures, organizes, and optimizes our data assets using Databricks Un
 - **VS Code**: Local development environment for Python scripting and data generation.
 - **PySpark (Python)**: Core distributed processing engine for ingestion and complex transformations.
 - **SQL**: Used for ad-hoc data analysis, validation, and warehouse-style querying.
-- **dbt Core**: Planned for later phases to manage modular SQL transformations and documentation.
 
 ## Project Status
 - [x] **Environment Setup**: Databricks workspace and Unity Catalog configuration.

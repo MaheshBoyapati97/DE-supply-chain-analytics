@@ -1,5 +1,5 @@
 # DE-supply-chain-analytics
-End-to-end Data Engineering project: Real-time supply chain intelligence using Azure Databricks, Unity Catalog, and dbt.
+An end-to-end Data Engineering project automating supply chain analytics on Azure Databricks using PySpark, SQL, Unity Catalog, and native Workflow orchestration.
 
 # Real-Time Supply Chain Intelligence Platform
 
